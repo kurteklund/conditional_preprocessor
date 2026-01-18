@@ -1,12 +1,11 @@
 package main
 
 import (
-	"log"
 	"regexp"
 	"slices"
 )
 
-var conditionalRegionRegExp = regexp.MustCompile(`\{\{#if\s*(!)?\s*(\w+)\s*\}\}((.|\n)*)\{\{#endif}}`)
+var conditionalRegionRegExp = regexp.MustCompile(`{{#if\s*(!)?\s*(\w+)\s*\}}((.|\n)+?){{#endif}}`)
 
 func processSections(bookSections *MdBookTopItem, conditionalRegions []string) {
 	for i := range bookSections.Sections {
@@ -28,21 +27,31 @@ func processChapter(chapter *MdBookChapter, conditionalRegions []string) {
 }
 
 func ProcessConditionalRegions(text string, conditionalRegions []string) string {
+	text, replaced := replaceFirstRegion(text, conditionalRegions)
+
+	for replaced == true {
+		text, replaced = replaceFirstRegion(text, conditionalRegions)
+	}
+
+	return text
+}
+
+func replaceFirstRegion(text string, conditionalRegions []string) (string, bool) {
 	var regexpIndexes = conditionalRegionRegExp.FindStringSubmatchIndex(text)
 
 	if regexpIndexes == nil {
-		return text
+		return text, false
 	}
 
 	if len(regexpIndexes) == 10 {
-		var expression = text[regexpIndexes[0]:regexpIndexes[1]]
+		// var expression = text[regexpIndexes[0]:regexpIndexes[1]]
 		var notIndication = regexpIndexes[2] != regexpIndexes[3]
 		var regionName = text[regexpIndexes[4]:regexpIndexes[5]]
 		var regionText = text[regexpIndexes[6]:regexpIndexes[7]]
-		log.Println("Expression: " + expression)
-		log.Printf("NotIndication: %v", notIndication)
-		log.Println("Region Name: " + regionName)
-		log.Println("Section Text: " + regionText)
+		// log.Println("Expression: " + expression)
+		// log.Printf("NotIndication: %v", notIndication)
+		// log.Println("Region Name: " + regionName)
+		// log.Println("Section Text: " + regionText)
 
 		var showRegionText = false
 
@@ -60,8 +69,8 @@ func ProcessConditionalRegions(text string, conditionalRegions []string) string 
 
 		result += text[regexpIndexes[1]:]
 
-		return result
+		return result, true
 	}
 
-	return text
+	return text, false
 }

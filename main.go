@@ -90,7 +90,7 @@ func GetConditionalRegions(topItem MdBookTopItem) []string {
 }
 
 func main() {
-	debugSaveStdInToJsonFile := true
+	debugSaveStdInToJsonFile := false
 	tempSubDir := createTmpSubFolderAndReturnPath()
 	debugInputJsonFileName := path.Join(tempSubDir, "input.json")
 
@@ -110,10 +110,10 @@ func main() {
 		}
 	}
 
-	jsonText := readJsonFromStdIn()
-	log.Println("After readJsonFromStdIn()")
+	// For debug purposes, read the json from the file instead
 	// jsonText := ReadTextFile(debugInputJsonFileName)
-
+	// When not debugging, read the json from stdin
+	jsonText := readJsonFromStdIn()
 	if debugSaveStdInToJsonFile {
 		log.Println("Save stdin to file: " + debugInputJsonFileName)
 		CreateTextFile(debugInputJsonFileName, jsonText)
