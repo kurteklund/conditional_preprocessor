@@ -3,30 +3,41 @@ package main
 import (
 	"regexp"
 	"slices"
+	"strings"
 )
 
 var conditionalRegionRegExp = regexp.MustCompile(`{{#if\s*(!)?\s*(\w+)\s*\}}((.|\n)+?){{#endif}}`)
 
-func processSections(bookSections *MdBookTopItem, conditionalRegions []string) {
+func processSections(bookSections *MdBookTopItem, conditionalRegions []string, varNameAndValues []VarNameAndValue) {
 	for i := range bookSections.Sections {
 		var section = &bookSections.Sections[i]
-		processSection(section, conditionalRegions)
+		processSection(section, conditionalRegions, varNameAndValues)
 	}
 }
 
-func processSection(section *MdBookSection, conditionalRegions []string) {
-	processChapter(&section.Chapter, conditionalRegions)
+func processSection(section *MdBookSection, conditionalRegions []string, varNameAndValues []VarNameAndValue) {
+	processChapter(&section.Chapter, conditionalRegions, varNameAndValues)
 	for i := range section.Chapter.SubItems {
 		subSection := &section.Chapter.SubItems[i]
-		processSection(subSection, conditionalRegions)
+		processSection(subSection, conditionalRegions, varNameAndValues)
 	}
 }
 
-func processChapter(chapter *MdBookChapter, conditionalRegions []string) {
-	chapter.Content = ProcessConditionalRegions(chapter.Content, conditionalRegions)
+func processChapter(chapter *MdBookChapter, conditionalRegions []string, varNameAndValues []VarNameAndValue) {
+	chapter.Content = processVariables(chapter.Content, varNameAndValues)
+	chapter.Content = processConditionalRegions(chapter.Content, conditionalRegions)
 }
 
-func ProcessConditionalRegions(text string, conditionalRegions []string) string {
+func processVariables(text string, varNameAndValues []VarNameAndValue) string {
+	for _, varNameAndValue := range varNameAndValues {
+		var textToReplace = "{{" + varNameAndValue.Name + "}}"
+		text = strings.ReplaceAll(text, textToReplace, varNameAndValue.Value)
+	}
+
+	return text
+}
+
+func processConditionalRegions(text string, conditionalRegions []string) string {
 	text, replaced := replaceFirstRegion(text, conditionalRegions)
 
 	for replaced == true {

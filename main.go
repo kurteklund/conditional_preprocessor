@@ -71,10 +71,11 @@ func readTextFile(filePath string) string {
 
 func createTmpSubFolderAndReturnPath() string {
 	//  Get the system temp directory (cross-platform)
-	var subDir = path.Join(os.TempDir(), "conditional_preprocessor")
+	const subdirectory = "conditional_preprocessor"
+	var subDir = path.Join(os.TempDir(), subdirectory)
 	err := os.MkdirAll(subDir, os.ModePerm)
 	if err != nil {
-		log.Fatalf("failed to create temp subdirectory: %w", err)
+		log.Fatalf("failed to create temp subdirectory " + subdirectory)
 	}
 
 	return subDir
@@ -87,6 +88,15 @@ func GetConditionalRegions(topItem MdBookTopItem) []string {
 	}
 
 	return []string{}
+}
+
+func GetVariableDeclarations(topItem MdBookTopItem) []VarNameAndValue {
+	var preprocessor = topItem.Config.Preprocessor
+	if preprocessor.Test != nil && preprocessor.Test.Variables != nil {
+		return preprocessor.Test.Variables
+	}
+
+	return []VarNameAndValue{}
 }
 
 func main() {
@@ -127,8 +137,9 @@ func main() {
 		// The first item is configuration, parameters to the preprocessor and other stuff
 		// The second item is the "content" of the book, the part that should be exported
 		conditionalRegions := GetConditionalRegions(book[0])
+		variableDeclarations := GetVariableDeclarations(book[0])
 		bookSections := book[1]
-		processSections(&bookSections, conditionalRegions)
+		processSections(&bookSections, conditionalRegions, variableDeclarations)
 		// writeBookSectionsToFile(bookSections, "/tmp/mdbook_out.json")
 		writeBookSectionsStdOut(bookSections)
 	}

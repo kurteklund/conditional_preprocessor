@@ -55,11 +55,12 @@ type MdBookConfigPreprocessor struct {
 }
 
 type MdBookConfigPreprocessorX struct {
-	Before             []string `json:"before,omitempty"`
-	After              []string `json:"after,omitempty"`
-	Command            string   `json:"command"`
-	ConditionalRegions []string `json:"conditional_regions,omitempty"`
-	Renderer           []string `json:"renderer,omitempty"`
+	Before             []string          `json:"before,omitempty"`
+	After              []string          `json:"after,omitempty"`
+	Command            string            `json:"command"`
+	ConditionalRegions []string          `json:"conditional_regions,omitempty"`
+	Variables          []VarNameAndValue `json:"variables,omitempty"`
+	Renderer           []string          `json:"renderer,omitempty"`
 }
 
 type MdBookSection struct {
@@ -74,6 +75,11 @@ type MdBookChapter struct {
 	Path        string          `json:"path"`
 	SourcePath  string          `json:"source_path"`
 	ParentNames []string        `json:"parent_names"`
+}
+
+type VarNameAndValue struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
 func writeBookSectionsToFile(bookSections MdBookTopItem, filename string) {
