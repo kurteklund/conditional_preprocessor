@@ -16,7 +16,7 @@ type MdBookTopItem struct {
 	Config        *MdBookConfig   `json:"config,omitempty"`
 	Renderer      string          `json:"renderer,omitempty"`
 	MdBookVersion string          `json:"mdbook_version,omitempty"`
-	Sections      []MdBookSection `json:"sections,omitempty"`
+	Sections      []MdBookSection `json:"items,omitempty"`
 	NonExhaustive *string         `json:"__non_exhaustive"`
 }
 
