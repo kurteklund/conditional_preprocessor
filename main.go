@@ -3,10 +3,15 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"path"
+
+	"github.com/logrusorgru/aurora/v4"
 )
+
+const preprocessorName = "conditional_preprocessor"
 
 func check(e error) {
 	if e != nil {
@@ -99,8 +104,12 @@ func GetVariableDeclarations(topItem MdBookTopItem) []VarNameAndValue {
 	return []VarNameAndValue{}
 }
 
+func printInfoToStderr(str string) {
+	fmt.Fprintf(os.Stderr, " %s %s: %s\n", aurora.Green("INFO"), preprocessorName, str)
+}
+
 func main() {
-	debugSaveStdInToJsonFile := false
+	debugSaveStdInToJsonFile := true
 	tempSubDir := createTmpSubFolderAndReturnPath()
 	debugInputJsonFileName := path.Join(tempSubDir, "input.json")
 
@@ -120,14 +129,12 @@ func main() {
 		}
 	}
 
-	os.Stderr.WriteString(" INFO Kurt was here\n")
-
 	// For debug purposes, read the json from the file instead
 	// jsonText := ReadTextFile(debugInputJsonFileName)
 	// When not debugging, read the json from stdin
 	jsonText := readJsonFromStdIn()
 	if debugSaveStdInToJsonFile {
-		log.Println("Save stdin to file: " + debugInputJsonFileName)
+		printInfoToStderr("Saving stdin to file: " + debugInputJsonFileName)
 		CreateTextFile(debugInputJsonFileName, jsonText)
 	}
 
