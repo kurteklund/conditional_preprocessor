@@ -120,6 +120,8 @@ func main() {
 		}
 	}
 
+	os.Stderr.WriteString(" INFO Kurt was here\n")
+
 	// For debug purposes, read the json from the file instead
 	// jsonText := ReadTextFile(debugInputJsonFileName)
 	// When not debugging, read the json from stdin
