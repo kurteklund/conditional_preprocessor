@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var conditionalRegionRegExp = regexp.MustCompile(`{{#if\s*(!)?\s*(\w+)\s*\}}((.|\n)+?){{#endif}}`)
+var conditionalRegionRegExp = regexp.MustCompile(`{{if\s*(!)?\s*(\w+)\s*\}}((.|\n)+?){{endif}}`)
 
 func processSections(bookSections *MdBookTopItem, conditionalRegions []string, varNameAndValues []VarNameAndValue) {
 	for i := range bookSections.Sections {

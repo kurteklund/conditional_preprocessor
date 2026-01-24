@@ -109,7 +109,7 @@ func printInfoToStderr(str string) {
 }
 
 func main() {
-	debugSaveStdInToJsonFile := true
+	debugSaveStdInToJsonFile := false
 	tempSubDir := createTmpSubFolderAndReturnPath()
 	debugInputJsonFileName := path.Join(tempSubDir, "input.json")
 
